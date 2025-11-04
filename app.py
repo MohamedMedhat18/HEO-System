@@ -757,6 +757,18 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+# --- Company Logo and Header ---
+st.markdown(
+    """
+    <div style='display: flex; align-items: center; gap: 12px; margin-top: 10px; margin-bottom: 20px;'>
+        <img src='assets/logo1.png' width='85'>
+        <h2 style='margin: 0; color: #183475;'>HEO Medical Systems</h2>
+    </div>
+    <hr style='border: 1px solid #e0e0e0; margin-top: 0;'>
+    """,
+    unsafe_allow_html=True
+)
+
 
 show_missing_packages_notice()
 
