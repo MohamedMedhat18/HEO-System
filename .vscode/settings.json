@@ -1,0 +1,8 @@
+{
+    // Reduce Pylance noise about missing imports in this workspace.
+    // If you prefer strict checking, remove or edit this file in VS Code.
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingImports": "none",
+        "reportMissingModuleSource": "none"
+    }
+}

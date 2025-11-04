@@ -1,0 +1,49 @@
+{
+    "app_title": "نظام الفواتير",
+    "login": {
+        "login_button": "تسجيل الدخول",
+        "username": "اسم المستخدم",
+        "password": "كلمة المرور",
+        "login_error": "اسم المستخدم أو كلمة المرور غير صحيحة."
+    },
+    "dashboard": {
+        "welcome": "مرحبًا بك",
+        "admin_panel": "لوحة تحكم المدير",
+        "agent_panel": "لوحة تحكم الوكيل",
+        "your_invoices": "فواتيرك",
+        "total_invoices": "إجمالي الفواتير",
+        "total_sales": "إجمالي المبيعات",
+        "status_summary": "معلق / مدفوع / ملغى",
+        "export": "تصدير",
+        "export_excel": "تصدير الفواتير إلى Excel",
+        "export_pdf": "تصدير جميع الفواتير كملف PDF"
+    },
+    "invoices": {
+        "view_invoices": "عرض الفواتير",
+        "create_invoice": "إنشاء فاتورة",
+        "date_label": "التاريخ:",
+        "single_title": "فاتورة",
+        "download_pdf": "تحميل PDF",
+        "mark_paid": "تحديد كمدفوع",
+        "mark_cancelled": "تحديد كملغى",
+        "search_placeholder": "البحث حسب العميل أو رقم الفاتورة أو المنتج",
+        "status_filter_label": "الحالة",
+        "no_invoices": "لا توجد فواتير."
+    },
+    "clients": {
+        "title": "العملاء",
+        "name_label": "اسم العميل",
+        "email_label": "البريد الإلكتروني للعميل"
+    },
+    "products": {
+        "title": "المنتجات",
+        "product_label": "المنتج / الوصف"
+    },
+    "settings": {
+        "title": "الإعدادات",
+        "desc": "الإعدادات والتفضيلات."
+    },
+    "footer": {
+        "contact": "اتصل بنا"
+    }
+}

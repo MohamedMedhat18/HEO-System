@@ -1,0 +1,10 @@
+[general]
+email = "your_email@example.com"
+primaryColor = "#1E1E1E"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F0F0F0"
+textColor = "#000000"
+font = "sans serif"
+
+[theme]
+base = "dark"  # Options: "light", "dark", "streamlit"

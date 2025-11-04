@@ -1,0 +1,7 @@
+streamlit
+bcrypt
+plotly
+reportlab
+arabic_reshaper
+python-bidi
+pandas

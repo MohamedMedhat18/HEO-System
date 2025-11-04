@@ -1,0 +1,38 @@
+{
+  "app_title": "Invoice Management System",
+  "login": {
+    "username": "Username",
+    "password": "Password",
+    "login_button": "Login",
+    "forgot_password": "Forgot Password?",
+    "login_error": "Invalid username or password."
+  },
+  "dashboard": {
+    "welcome": "Welcome to the Dashboard",
+    "admin_panel": "Admin Panel",
+    "agent_panel": "Agent Panel",
+    "logout": "Logout"
+  },
+  "invoices": {
+    "create_invoice": "Create Invoice",
+    "view_invoices": "View Invoices",
+    "invoice_number": "Invoice Number",
+    "client_name": "Client Name",
+    "product": "Product",
+    "quantity": "Quantity",
+    "price": "Price",
+    "total": "Total",
+    "generate_pdf": "Generate PDF",
+    "invoice_success": "Invoice created successfully!",
+    "invoice_error": "Error creating invoice. Please try again."
+  },
+  "settings": {
+    "language": "Language",
+    "toggle_language": "Toggle Language"
+  },
+  "footer": {
+    "contact": "Contact Us",
+    "terms": "Terms and Conditions",
+    "privacy": "Privacy Policy"
+  }
+}

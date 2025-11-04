@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="invoice-container">
+        <header>
+            <h1>{{ invoice.title }}</h1>
+            <p>{{ invoice.date }}</p>
+            <p>{{ invoice.invoice_number }}</p>
+        </header>
+        <section class="client-info">
+            <h2>{{ translations.client_info }}</h2>
+            <p>{{ invoice.client.name }}</p>
+            <p>{{ invoice.client.address }}</p>
+            <p>{{ invoice.client.email }}</p>
+        </section>
+        <section class="invoice-details">
+            <h2>{{ translations.invoice_details }}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>{{ translations.item }}</th>
+                        <th>{{ translations.quantity }}</th>
+                        <th>{{ translations.price }}</th>
+                        <th>{{ translations.total }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in invoice.items %}
+                    <tr>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.price }}</td>
+                        <td>{{ item.total }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        <footer>
+            <h2>{{ translations.total_amount }}</h2>
+            <p>{{ invoice.total }}</p>
+        </footer>
+    </div>
+</body>
+</html>

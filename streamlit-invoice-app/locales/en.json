@@ -1,0 +1,56 @@
+{
+    "app_title": "Invoice Management System",
+    "login": {
+        "login_button": "Login",
+        "username": "Username",
+        "password": "Password",
+        "login_error": "Invalid username or password."
+    },
+    "dashboard": {
+        "welcome": "Welcome",
+        "admin_panel": "Admin Panel",
+        "agent_panel": "Agent Panel",
+        "your_invoices": "Your invoices",
+        "total_invoices": "Total Invoices",
+        "total_sales": "Total Sales",
+        "status_summary": "Pending / Paid / Cancelled",
+        "export": "Export",
+        "export_excel": "Export invoices to Excel",
+        "export_pdf": "Export all invoices as PDF (bulk)",
+        "menu_dashboard": "Dashboard",
+        "menu_invoices": "Invoices",
+        "menu_clients": "Clients",
+        "menu_products": "Products",
+        "menu_settings": "Settings",
+        "menu_label": "Menu"
+    },
+    "invoices": {
+        "view_invoices": "View Invoices",
+        "search_placeholder": "Search by client, invoice id or product",
+        "status_filter_label": "Status",
+        "create_invoice": "Create Invoice",
+        "date_label": "Date:",
+        "mark_paid": "Mark Paid",
+        "mark_cancelled": "Mark Cancelled",
+        "single_title": "Invoice",
+        "download_pdf": "Download PDF",
+        "created_msg": "Invoice {id} created.",
+        "no_invoices": "No invoices found."
+    },
+    "clients": {
+        "title": "Clients",
+        "name_label": "Client Name",
+        "email_label": "Client Email"
+    },
+    "products": {
+        "title": "Products",
+        "product_label": "Product / Description"
+    },
+    "settings": {
+        "title": "Settings",
+        "desc": "Settings and preferences."
+    },
+    "footer": {
+        "contact": "Contact Us"
+    }
+}

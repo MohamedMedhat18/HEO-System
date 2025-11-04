@@ -1,0 +1,36 @@
+{
+  "app_title": "نظام الفواتير",
+  "login": {
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "login_button": "تسجيل الدخول",
+    "forgot_password": "نسيت كلمة المرور؟"
+  },
+  "dashboard": {
+    "welcome": "مرحبًا بك في لوحة التحكم",
+    "admin": "لوحة تحكم المدير",
+    "agent": "لوحة تحكم الوكيل",
+    "logout": "تسجيل الخروج"
+  },
+  "invoices": {
+    "create_invoice": "إنشاء فاتورة",
+    "view_invoices": "عرض الفواتير",
+    "invoice_number": "رقم الفاتورة",
+    "client_name": "اسم العميل",
+    "amount": "المبلغ",
+    "date": "التاريخ",
+    "status": "الحالة",
+    "actions": "الإجراءات"
+  },
+  "pdf": {
+    "generate_pdf": "إنشاء PDF",
+    "download": "تحميل"
+  },
+  "errors": {
+    "login_failed": "فشل تسجيل الدخول. تحقق من اسم المستخدم وكلمة المرور.",
+    "invoice_creation_failed": "فشل إنشاء الفاتورة. حاول مرة أخرى."
+  },
+  "language": {
+    "toggle": "تبديل اللغة"
+  }
+}

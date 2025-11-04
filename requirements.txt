@@ -1,0 +1,11 @@
+````pip-requirements
+streamlit
+bcrypt
+plotly
+reportlab
+arabic-reshaper
+python-bidi
+pandas
+openpyxl
+Pillow
+sqlalchemy
