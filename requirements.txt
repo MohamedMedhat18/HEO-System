@@ -8,6 +8,8 @@ pandas
 openpyxl
 fastapi
 uvicorn[standard]
-pydantic
+pydantic[email]
 requests
 python-multipart
+email-validator
+httpx
