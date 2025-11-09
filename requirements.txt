@@ -6,3 +6,10 @@ arabic-reshaper
 python-bidi
 pandas
 openpyxl
+fastapi
+uvicorn[standard]
+pydantic[email]
+requests
+python-multipart
+email-validator
+httpx
