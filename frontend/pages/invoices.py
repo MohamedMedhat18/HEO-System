@@ -103,70 +103,240 @@ def render_invoice_list(api_base_url: str, user: dict):
 
 
 def render_create_invoice(api_base_url: str, user: dict):
-    """Render create invoice form."""
+    """
+    Render create invoice form with dynamic item management.
+    
+    Uses st.session_state to manage multiple invoice items (up to 20).
+    Provides professional validation and error handling.
+    """
     st.subheader("Create New Invoice")
     
-    with st.form("create_invoice_form"):
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            client_name = st.text_input("Client Name *", placeholder="Enter client name")
-            client_email = st.text_input("Client Email", placeholder="client@example.com")
-            client_address = st.text_area("Client Address", placeholder="Enter address")
-        
-        with col2:
-            invoice_type = st.selectbox(
-                "Invoice Type",
-                options=["Quotation Invoice", "Commercial Invoice", "Proforma Invoice"]
-            )
-            language = st.selectbox("Language", options=["en", "ar"], index=0)
-            currency = st.selectbox("Currency", options=["EGP", "USD", "EUR"], index=0)
-        
-        st.markdown("---")
-        st.subheader("Invoice Items")
-        
-        # Simple item entry
-        col1, col2, col3 = st.columns([3, 1, 1])
-        
-        with col1:
-            item_desc = st.text_input("Item Description *", placeholder="Product or service description")
-        
-        with col2:
-            item_qty = st.number_input("Quantity *", min_value=1, value=1)
-        
-        with col3:
-            item_price = st.number_input("Price *", min_value=0.0, value=0.0, format="%.2f")
-        
-        notes = st.text_area("Notes", placeholder="Additional notes or comments")
-        
-        submitted = st.form_submit_button("Create Invoice", type="primary", use_container_width=True)
-        
-        if submitted:
-            # Validation
-            if not client_name or not item_desc:
-                st.error("Please fill in all required fields (*)")
-            else:
-                create_invoice(
-                    api_base_url,
-                    user,
-                    client_name,
-                    client_email,
-                    client_address,
-                    invoice_type,
-                    language,
-                    currency,
-                    item_desc,
-                    item_qty,
-                    item_price,
-                    notes
+    # Initialize session state for invoice items
+    if 'invoice_items' not in st.session_state:
+        st.session_state.invoice_items = [{'description': '', 'quantity': 1, 'price': 0.0}]
+    
+    # Client Information Section
+    st.markdown("### 📋 Client Information")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        client_name = st.text_input(
+            "Client Name *", 
+            placeholder="Enter client name",
+            help="Required: Client or company name"
+        )
+        client_email = st.text_input(
+            "Client Email", 
+            placeholder="client@example.com",
+            help="Optional: Email for invoice delivery"
+        )
+        client_address = st.text_area(
+            "Client Address", 
+            placeholder="Enter full address",
+            help="Optional: Client billing address"
+        )
+    
+    with col2:
+        invoice_type = st.selectbox(
+            "Invoice Type",
+            options=["Quotation Invoice", "Commercial Invoice", "Proforma Invoice"],
+            help="Select the type of invoice to generate"
+        )
+        language = st.selectbox(
+            "Language", 
+            options=["en", "ar"], 
+            index=0,
+            format_func=lambda x: "English" if x == "en" else "Arabic"
+        )
+        currency = st.selectbox(
+            "Currency", 
+            options=["EGP", "USD", "EUR"], 
+            index=0,
+            help="Currency for invoice amounts"
+        )
+    
+    st.markdown("---")
+    
+    # Invoice Items Section
+    st.markdown("### 🛒 Invoice Items")
+    
+    # Display all items with ability to edit
+    items_to_remove = []
+    total_amount = 0.0
+    
+    for idx, item in enumerate(st.session_state.invoice_items):
+        with st.container():
+            col1, col2, col3, col4 = st.columns([4, 1, 1, 0.5])
+            
+            with col1:
+                item['description'] = st.text_input(
+                    f"Item Description {idx + 1} *",
+                    value=item.get('description', ''),
+                    placeholder="Product or service description",
+                    key=f"desc_{idx}"
                 )
+            
+            with col2:
+                item['quantity'] = st.number_input(
+                    f"Qty {idx + 1} *",
+                    min_value=1,
+                    max_value=9999,
+                    value=int(item.get('quantity', 1)),
+                    key=f"qty_{idx}"
+                )
+            
+            with col3:
+                item['price'] = st.number_input(
+                    f"Price {idx + 1} *",
+                    min_value=0.0,
+                    value=float(item.get('price', 0.0)),
+                    format="%.2f",
+                    key=f"price_{idx}"
+                )
+            
+            with col4:
+                if len(st.session_state.invoice_items) > 1:
+                    if st.button("🗑️", key=f"remove_{idx}", help="Remove this item"):
+                        items_to_remove.append(idx)
+            
+            # Calculate item total
+            item_total = float(item['quantity']) * float(item['price'])
+            total_amount += item_total
+            st.caption(f"Item Total: {currency} {item_total:,.2f}")
+    
+    # Remove items marked for deletion
+    for idx in reversed(items_to_remove):
+        st.session_state.invoice_items.pop(idx)
+        st.rerun()
+    
+    # Add Item and Summary
+    col1, col2 = st.columns([1, 2])
+    
+    with col1:
+        if st.button(
+            "➕ Add Item", 
+            use_container_width=True,
+            disabled=len(st.session_state.invoice_items) >= 20
+        ):
+            st.session_state.invoice_items.append({
+                'description': '',
+                'quantity': 1,
+                'price': 0.0
+            })
+            st.rerun()
+        
+        if len(st.session_state.invoice_items) >= 20:
+            st.warning("Maximum 20 items reached")
+    
+    with col2:
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    padding: 1rem; border-radius: 8px; text-align: center; color: white;'>
+            <div style='font-size: 0.9rem;'>Total Items: {len(st.session_state.invoice_items)}</div>
+            <div style='font-size: 1.5rem; font-weight: 700;'>{currency} {total_amount:,.2f}</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # Notes Section
+    st.markdown("### 📝 Additional Notes")
+    notes = st.text_area(
+        "Notes", 
+        placeholder="Add any additional information or special instructions",
+        help="Optional: Additional notes to include in the invoice"
+    )
+    
+    # Action Buttons
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        if st.button("🗑️ Clear All Items", use_container_width=True):
+            st.session_state.invoice_items = [{'description': '', 'quantity': 1, 'price': 0.0}]
+            st.rerun()
+    
+    with col2:
+        generate_pdf = st.button(
+            "📄 Generate PDF & Create Invoice", 
+            type="primary", 
+            use_container_width=True
+        )
+    
+    # Form Submission Handler
+    if generate_pdf:
+        # Validation
+        validation_errors = []
+        
+        if not client_name or client_name.strip() == '':
+            validation_errors.append("❌ Client name is required")
+        
+        # Validate items
+        valid_items = []
+        for idx, item in enumerate(st.session_state.invoice_items):
+            if item['description'].strip():
+                if item['quantity'] <= 0:
+                    validation_errors.append(f"❌ Item {idx + 1}: Quantity must be greater than 0")
+                if item['price'] < 0:
+                    validation_errors.append(f"❌ Item {idx + 1}: Price cannot be negative")
+                valid_items.append(item)
+        
+        if len(valid_items) == 0:
+            validation_errors.append("❌ At least one item with description is required")
+        
+        # Display validation errors
+        if validation_errors:
+            st.error("### Please fix the following errors:")
+            for error in validation_errors:
+                st.error(error)
+        else:
+            # All validation passed, create invoice
+            with st.spinner("Creating invoice and generating PDF..."):
+                try:
+                    create_invoice_with_items(
+                        api_base_url,
+                        user,
+                        client_name,
+                        client_email,
+                        client_address,
+                        invoice_type,
+                        language,
+                        currency,
+                        valid_items,
+                        notes
+                    )
+                    
+                    # Clear items after successful creation
+                    st.session_state.invoice_items = [{'description': '', 'quantity': 1, 'price': 0.0}]
+                    
+                except Exception as e:
+                    st.error(f"❌ Error creating invoice: {str(e)}")
 
 
-def create_invoice(api_base_url, user, client_name, client_email, client_address,
-                  invoice_type, language, currency, item_desc, item_qty, item_price, notes):
-    """Create a new invoice via API."""
+def create_invoice_with_items(api_base_url, user, client_name, client_email, client_address,
+                               invoice_type, language, currency, items, notes):
+    """
+    Create a new invoice with multiple items via API.
+    
+    This function handles the complete invoice creation workflow:
+    1. Creates or retrieves the client
+    2. Prepares invoice items with calculated totals
+    3. Submits to backend API
+    4. Displays success message with download option
+    
+    Args:
+        api_base_url: Base URL for the API
+        user: Current user object
+        client_name: Name of the client
+        client_email: Client's email address
+        client_address: Client's billing address
+        invoice_type: Type of invoice (Quotation, Commercial, Proforma)
+        language: Invoice language ('en' or 'ar')
+        currency: Currency code (EGP, USD, EUR)
+        items: List of invoice items with description, quantity, price
+        notes: Additional notes for the invoice
+    """
     try:
-        # First, create or get client
+        # Step 1: Create or get client
         client_response = requests.post(
             f"{api_base_url}/api/clients",
             json={
@@ -181,18 +351,22 @@ def create_invoice(api_base_url, user, client_name, client_email, client_address
         if client_response.status_code == 200:
             client_id = client_response.json()['id']
             
-            # Create invoice
+            # Step 2: Prepare invoice items with calculated totals
+            formatted_items = []
+            for item in items:
+                item_total = float(item['quantity']) * float(item['price'])
+                formatted_items.append({
+                    "description": item['description'],
+                    "quantity": int(item['quantity']),
+                    "price": float(item['price']),
+                    "total": item_total
+                })
+            
+            # Step 3: Create invoice via API
             invoice_data = {
                 "agent_id": user['id'],
                 "client_id": client_id,
-                "items": [
-                    {
-                        "description": item_desc,
-                        "quantity": int(item_qty),
-                        "price": float(item_price),
-                        "total": float(item_qty) * float(item_price)
-                    }
-                ],
+                "items": formatted_items,
                 "invoice_type": invoice_type,
                 "language": language,
                 "notes": notes,
@@ -205,15 +379,46 @@ def create_invoice(api_base_url, user, client_name, client_email, client_address
             response = requests.post(
                 f"{api_base_url}/api/invoices",
                 json=invoice_data,
-                timeout=5
+                timeout=10
             )
             
             if response.status_code == 200:
-                st.success("Invoice created successfully!")
+                result = response.json()
+                invoice_id = result.get('id')
+                
+                # Display success message with details
+                st.success(f"✅ Invoice #{invoice_id} created successfully!")
+                
+                # Show summary
+                total_items = len(formatted_items)
+                total_amount = sum(item['total'] for item in formatted_items)
+                
+                st.markdown(f"""
+                <div style='background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); 
+                            padding: 1.5rem; border-radius: 12px; margin: 1rem 0;'>
+                    <h3 style='color: white; margin: 0;'>📄 Invoice Summary</h3>
+                    <div style='color: white; margin-top: 1rem;'>
+                        <p><strong>Invoice ID:</strong> #{invoice_id}</p>
+                        <p><strong>Client:</strong> {client_name}</p>
+                        <p><strong>Total Items:</strong> {total_items}</p>
+                        <p><strong>Total Amount:</strong> {currency} {total_amount:,.2f}</p>
+                        <p><strong>Type:</strong> {invoice_type}</p>
+                        <p><strong>Language:</strong> {'English' if language == 'en' else 'Arabic'}</p>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Note: PDF generation happens on backend automatically
+                st.info("📄 PDF invoice has been generated and saved. You can view it in the invoice list.")
+                
                 st.balloons()
-                st.rerun()
+                
+                # Show button to view invoices
+                if st.button("📋 View All Invoices", type="primary"):
+                    st.rerun()
+                    
             else:
-                st.error(f"Failed to create invoice: {response.text}")
+                st.error(f"❌ Failed to create invoice: {response.text}")
         else:
             st.error("Failed to create client")
     except Exception as e:
