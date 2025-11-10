@@ -138,7 +138,7 @@ def generate_professional_pdf(
         invoice_type = invoice_data.get('invoice_type', 'Invoice')
         if language == 'ar':
             type_map = {
-                'Quotation Invoice': 'عرض سعر',
+                'Quotation Request': 'طلب عرض سعر',
                 'Commercial Invoice': 'فاتورة تجارية',
                 'Proforma Invoice': 'فاتورة أولية'
             }

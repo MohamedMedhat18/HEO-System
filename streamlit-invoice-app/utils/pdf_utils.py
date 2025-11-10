@@ -32,7 +32,7 @@ def generate_pdf(invoice_data, rtl=False):
             out = _shape_text_for_pdf(line, rtl=rtl)
             c.drawString(40, y, out)
             y -= 12
-        title = invoice_data.get("title", "Quotation Invoice / عرض سعر")
+        title = invoice_data.get("title", "Quotation Request / طلب عرض سعر")
         c.setFont("Helvetica-Bold", 16)
         title_out = _shape_text_for_pdf(title, rtl=rtl)
         c.drawCentredString(width / 2, height - 120, title_out)

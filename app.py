@@ -979,7 +979,7 @@ elif menu_key == "Invoices":
         client_name = st.text_input(texts.get("clients", {}).get("name_label", "Client Name"), key="ci_client_name")
         client_email = st.text_input(texts.get("clients", {}).get("email_label", "Client Email"), key="ci_client_email")
         client_address = st.text_input(texts.get("clients", {}).get("address_label", "Client Address"), key="ci_client_address")
-        invoice_type = st.selectbox("Invoice Type", options=["Quotation Invoice", "Commercial Invoice", "Proforma Invoice"], key="ci_type")
+        invoice_type = st.selectbox("Invoice Type", options=["Quotation Request", "Commercial Invoice", "Proforma Invoice"], key="ci_type")
         invoice_language = st.selectbox("Invoice Language", options=["en", "ar"], index=0, key="ci_lang")
         product = st.text_input(texts.get("products", {}).get("product_label", "Product / Description"), key="ci_product")
         qty = st.number_input(texts.get("invoices", {}).get("quantity_label", "Quantity"), 1, 1000, 1, key="ci_qty")
@@ -1124,7 +1124,7 @@ else:  # Settings page
                 {"description": "Product B / منتج ب", "quantity": 1, "price": 75.0, "total": 75.0},
             ],
             "total": 175.0,
-            "invoice_type": "Quotation Invoice",
+            "invoice_type": "Quotation Request",
             "language": "en",
             "agent_name": "Demo Agent",
             "notes": "Sample notes here."
@@ -1297,11 +1297,11 @@ def render_invoice_preview(invoice_data: dict, out_lang: str = "en", container_k
             "🌍 www.heomed.com",
         ]
         title_map = {
-            "Quotation Invoice": ("Quotation Invoice", "عرض سعر"),
+            "Quotation Request": ("Quotation Request", "طلب عرض سعر"),
             "Commercial Invoice": ("Commercial Invoice", "فاتورة تجارية"),
             "Proforma Invoice": ("Proforma Invoice", "فاتورة أولية"),
         }
-        inv_type = invoice_data.get("invoice_type", "Quotation Invoice")
+        inv_type = invoice_data.get("invoice_type", "Quotation Request")
         t_en, t_ar = title_map.get(inv_type, (inv_type, inv_type))
         title_text = f"{t_en} / {t_ar}" if out_lang == "en" else f"{t_ar} / {t_en}"
 

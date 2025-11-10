@@ -94,7 +94,7 @@ def create_invoice(
                 created_at,
                 currency or "EGP",
                 exchange_rate if exchange_rate is not None else 1.0,
-                invoice_type or "Quotation Invoice",
+                invoice_type or "Quotation Request",
                 language or "en",
                 notes or ""
             )
