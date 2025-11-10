@@ -34,21 +34,35 @@ cd HEO-System
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the application (both backend and frontend)
+# Run the unified application (recommended)
+streamlit run unified_app.py
+
+# OR run with the start script (backend + frontend separately)
 ./start.sh
+
+# OR run the standalone app
+streamlit run app.py
 ```
 
 The application will be available at:
+- **Unified App**: http://localhost:8501 (Backend auto-starts on 8000)
 - Frontend: http://localhost:8501
 - Backend API: http://localhost:8000
 - API Documentation: http://localhost:8000/docs
 
-### Manual Setup
+### Manual Setup (Legacy)
 
 ```bash
 # Install dependencies
 pip install -r requirements.txt
 
+# Option 1: Unified App (Recommended - Auto-starts backend)
+streamlit run unified_app.py
+
+# Option 2: Standalone App (All-in-one)
+streamlit run app.py
+
+# Option 3: Separate Backend + Frontend
 # Terminal 1: Start Backend API
 python backend/api/main.py
 
@@ -86,15 +100,16 @@ Agents run weekly via GitHub Actions and generate detailed reports.
 ## ✨ Features
 
 ### Frontend
+- ✅ **Unified Application** - Single entry point with auto-starting backend
+- ✅ **Professional Modern UI** - Gradient themes, animations, and responsive design
+- ✅ **Quotation Request System** - Dynamic items support (up to 30+ items per request)
 - ✅ Modern dashboard with real-time metrics
-- ✅ Animated card components
-- ✅ Dark mode support
-- ✅ Bilingual interface (EN/AR)
-- ✅ Responsive design
-- ✅ Live update indicators
-- ✅ Professional invoice forms
-- ✅ Client management
-- ✅ Settings panel
+- ✅ Animated card components with live indicators
+- ✅ Bilingual interface (EN/AR) with RTL support
+- ✅ Responsive design for desktop and mobile
+- ✅ Professional invoice/quotation forms
+- ✅ Client management with full CRUD operations
+- ✅ Settings panel with system configuration
 
 ### Backend
 - ✅ RESTful API with FastAPI
