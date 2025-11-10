@@ -81,7 +81,7 @@ class InvoiceBase(BaseModel):
     agent_id: Optional[int] = None
     client_id: int
     items: List[InvoiceItem]
-    invoice_type: Optional[str] = "Quotation Invoice"
+    invoice_type: Optional[str] = "Quotation Request"
     language: Optional[str] = "en"
     notes: Optional[str] = None
     client_name: Optional[str] = None

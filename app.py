@@ -971,25 +971,63 @@ elif menu_key == "Invoices":
         else:
             st.info(texts.get("invoices", {}).get("no_invoices", "No invoices found."))
 
-    # Create invoice UI
-    st.subheader(texts.get("invoices", {}).get("create_invoice", "Create Invoice"))
+    # Create invoice UI with dynamic items support (up to 30 items)
+    st.subheader(texts.get("invoices", {}).get("create_invoice", "Create Invoice / Quotation Request"))
     employees = load_employees()
     employee_options = {str(e["id"]): e["name"] for e in employees}
+    
     with st.form("create_invoice_form_v2"):
-        client_name = st.text_input(texts.get("clients", {}).get("name_label", "Client Name"), key="ci_client_name")
-        client_email = st.text_input(texts.get("clients", {}).get("email_label", "Client Email"), key="ci_client_email")
-        client_address = st.text_input(texts.get("clients", {}).get("address_label", "Client Address"), key="ci_client_address")
-        invoice_type = st.selectbox("Invoice Type", options=["Quotation Invoice", "Commercial Invoice", "Proforma Invoice"], key="ci_type")
-        invoice_language = st.selectbox("Invoice Language", options=["en", "ar"], index=0, key="ci_lang")
-        product = st.text_input(texts.get("products", {}).get("product_label", "Product / Description"), key="ci_product")
-        qty = st.number_input(texts.get("invoices", {}).get("quantity_label", "Quantity"), 1, 1000, 1, key="ci_qty")
-        price = st.number_input(texts.get("invoices", {}).get("price_label", "Price"), 0.0, 1e9, 0.0, format="%.2f", key="ci_price")
+        st.markdown("### Client Information")
+        col1, col2 = st.columns(2)
+        with col1:
+            client_name = st.text_input(texts.get("clients", {}).get("name_label", "Client Name"), key="ci_client_name")
+            client_email = st.text_input(texts.get("clients", {}).get("email_label", "Client Email"), key="ci_client_email")
+        with col2:
+            client_address = st.text_input(texts.get("clients", {}).get("address_label", "Client Address"), key="ci_client_address")
+            client_phone = st.text_input("Client Phone", key="ci_client_phone")
+        
+        st.markdown("### Document Details")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            invoice_type = st.selectbox("Document Type", options=["Quotation Request", "Commercial Invoice", "Proforma Invoice"], key="ci_type")
+        with col2:
+            invoice_language = st.selectbox("Language", options=["en", "ar"], index=0, key="ci_lang")
+        with col3:
+            agent_choice = st.selectbox("Agent / Signer", options=["(none)"] + list(employee_options.values()), index=0, key="ci_agent")
+        
+        st.markdown("### Items")
+        num_items = st.number_input("Number of Items", min_value=1, max_value=30, value=3, key="ci_num_items", help="Supports up to 30 items per request")
+        
+        items_data = []
+        for i in range(num_items):
+            st.markdown(f"**Item {i+1}**")
+            col1, col2, col3, col4 = st.columns([3, 1, 1, 1])
+            with col1:
+                desc = st.text_input(f"Description", key=f"ci_item_desc_{i}", label_visibility="collapsed", placeholder="Enter item description...")
+            with col2:
+                qty = st.number_input(f"Qty", min_value=0, value=1, key=f"ci_item_qty_{i}", label_visibility="collapsed")
+            with col3:
+                price = st.number_input(f"Price", min_value=0.0, value=0.0, step=0.01, key=f"ci_item_price_{i}", label_visibility="collapsed")
+            with col4:
+                total = qty * price
+                st.metric("Total", f"{total:.2f}", label_visibility="collapsed")
+            
+            if desc:  # Only add items with descriptions
+                items_data.append({
+                    "description": desc,
+                    "quantity": int(qty),
+                    "price": float(price),
+                    "total": float(total)
+                })
+        
+        # Show grand total
+        grand_total = sum(item["total"] for item in items_data)
+        st.markdown(f"### Grand Total: **LE {grand_total:,.2f}**")
+        
         notes = st.text_area("Notes", key="ci_notes")
-        # agent selection
-        agent_choice = st.selectbox("Agent / Signer", options=["(none)"] + list(employee_options.values()), index=0, key="ci_agent")
-        submit_create = st.form_submit_button("Create Invoice")
+        submit_create = st.form_submit_button("🚀 Create " + invoice_type, use_container_width=True)
 
-    if submit_create:
+    if submit_create and client_name and items_data:
         # ensure client exists or create
         with get_db_connection() as conn:
             cur = conn.cursor()
@@ -998,10 +1036,10 @@ elif menu_key == "Invoices":
             if row:
                 client_id = row['id']
             else:
-                cur.execute("INSERT INTO clients (name,email,address) VALUES (?,?,?)", (client_name, client_email, client_address))
+                cur.execute("INSERT INTO clients (name,email,address,phone) VALUES (?,?,?,?)", (client_name, client_email, client_address, client_phone))
                 client_id = cur.lastrowid
                 conn.commit()
-        items = [{"description": product, "quantity": int(qty), "price": float(price), "total": float(qty) * float(price)}]
+        
         # map agent name -> id
         agent_id = None
         agent_name = ""
@@ -1012,7 +1050,9 @@ elif menu_key == "Invoices":
                     agent_id = e["id"]
                     agent_name = e["name"]
                     break
-        inv_id = create_invoice_db(agent_id, client_id, items, invoice_type=invoice_type, language=invoice_language, notes=notes, client_name=client_name, client_address=client_address)
+        
+        inv_id = create_invoice_db(agent_id, client_id, items_data, invoice_type=invoice_type, language=invoice_language, notes=notes, client_name=client_name, client_address=client_address)
+        
         # generate PDF and save
         invoice_record = {
             "id": inv_id,
@@ -1020,8 +1060,9 @@ elif menu_key == "Invoices":
             "date": datetime.utcnow().strftime("%Y-%m-%d"),
             "client_name": client_name,
             "client_address": client_address,
-            "items": items,
-            "total": sum(it["total"] for it in items),
+            "client_phone": client_phone,
+            "items": items_data,
+            "total": grand_total,
             "invoice_type": invoice_type,
             "language": invoice_language,
             "agent_id": agent_id,
@@ -1032,16 +1073,36 @@ elif menu_key == "Invoices":
         }
         pdf_bytes = generate_pdf_bytes(invoice_record, out_lang=invoice_language)
         ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
-        out_fname = f"invoice_{inv_id}_{ts}_{invoice_language}.pdf"
+        out_fname = f"{invoice_type.replace(' ', '_').lower()}_{inv_id}_{ts}_{invoice_language}.pdf"
         out_path = save_pdf_bytes(pdf_bytes, out_fname)
         update_invoice_pdf_path(inv_id, out_path)
-        st.success(f"Invoice {inv_id} created and PDF saved: {out_path}")
-        # show download button and preview
-        st.download_button("Download Invoice PDF", pdf_bytes, file_name=out_fname, mime="application/pdf", key=f"download_{inv_id}")
+        
+        st.success(f"✅ {invoice_type} #{inv_id} created successfully!")
+        st.info(f"📄 PDF saved: {out_path}")
+        st.balloons()
+        
+        # Show summary
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 12px; margin: 1rem 0;'>
+            <h3>Document Summary</h3>
+            <p><strong>Type:</strong> {invoice_type}</p>
+            <p><strong>Client:</strong> {client_name}</p>
+            <p><strong>Items:</strong> {len(items_data)}</p>
+            <p><strong>Total Amount:</strong> LE {grand_total:,.2f}</p>
+            <p><strong>Language:</strong> {'English' if invoice_language == 'en' else 'Arabic'}</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # show download button
+        st.download_button("📥 Download PDF", pdf_bytes, file_name=out_fname, mime="application/pdf", key=f"download_{inv_id}", use_container_width=True)
         try:
             load_invoices.clear()
         except Exception:
             pass
+    elif submit_create and not items_data:
+        st.error("⚠️ Please add at least one item with a description!")
+    elif submit_create and not client_name:
+        st.error("⚠️ Please provide a client name!")
 
 elif menu_key == "Clients":
     st.title(texts.get("clients", {}).get("title", "Clients"))
@@ -1124,7 +1185,7 @@ else:  # Settings page
                 {"description": "Product B / منتج ب", "quantity": 1, "price": 75.0, "total": 75.0},
             ],
             "total": 175.0,
-            "invoice_type": "Quotation Invoice",
+            "invoice_type": "Quotation Request",
             "language": "en",
             "agent_name": "Demo Agent",
             "notes": "Sample notes here."
@@ -1297,11 +1358,11 @@ def render_invoice_preview(invoice_data: dict, out_lang: str = "en", container_k
             "🌍 www.heomed.com",
         ]
         title_map = {
-            "Quotation Invoice": ("Quotation Invoice", "عرض سعر"),
+            "Quotation Request": ("Quotation Request", "طلب عرض سعر"),
             "Commercial Invoice": ("Commercial Invoice", "فاتورة تجارية"),
             "Proforma Invoice": ("Proforma Invoice", "فاتورة أولية"),
         }
-        inv_type = invoice_data.get("invoice_type", "Quotation Invoice")
+        inv_type = invoice_data.get("invoice_type", "Quotation Request")
         t_en, t_ar = title_map.get(inv_type, (inv_type, inv_type))
         title_text = f"{t_en} / {t_ar}" if out_lang == "en" else f"{t_ar} / {t_en}"
 

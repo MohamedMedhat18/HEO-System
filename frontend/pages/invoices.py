@@ -139,7 +139,7 @@ def render_create_invoice(api_base_url: str, user: dict):
     with col2:
         invoice_type = st.selectbox(
             "Invoice Type",
-            options=["Quotation Invoice", "Commercial Invoice", "Proforma Invoice"],
+            options=["Quotation Request", "Commercial Invoice", "Proforma Invoice"],
             help="Select the type of invoice to generate"
         )
         language = st.selectbox(
