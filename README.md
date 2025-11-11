@@ -132,9 +132,18 @@ Agents run weekly via GitHub Actions and generate detailed reports.
 
 ## 📖 Documentation
 
-- [Architecture Guide](docs/ARCHITECTURE.md) - System design and components
-- [API Documentation](http://localhost:8000/docs) - Interactive API docs (when running)
-- [Contributing Guide](CONTRIBUTING.md) - How to contribute
+### Quick Start Guides
+- 🚀 **[Streamlit Cloud Deployment](STREAMLIT_CLOUD_DEPLOYMENT.md)** - Deploy to cloud in 5 minutes
+- 🖥️ **[Windows Setup](run_minimal.ps1)** - PowerShell startup script
+- 🐧 **[Linux/Mac Setup](start.sh)** - Bash startup script
+
+### Complete Documentation
+- 📁 **[Project Structure](PROJECT_STRUCTURE.md)** - Complete file/folder organization
+- 🔧 **[Fixes & Improvements](FIXES_AND_IMPROVEMENTS.md)** - What's been fixed and how
+- 🌐 **[Deployment Guide](DEPLOYMENT.md)** - All deployment options (Docker, AWS, etc.)
+- 🏗️ **[Architecture Guide](docs/ARCHITECTURE.md)** - System design and components
+- 📡 **[API Documentation](http://localhost:8000/docs)** - Interactive API docs (when running)
+- 🤝 **[Contributing Guide](CONTRIBUTING.md)** - How to contribute
 
 ## 🧪 Testing
 

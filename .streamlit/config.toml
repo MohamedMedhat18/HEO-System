@@ -1,10 +1,14 @@
-[general]
-email = "your_email@example.com"
-primaryColor = "#1E1E1E"
+[theme]
+primaryColor = "#3880fa"
 backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F0F0F0"
-textColor = "#000000"
+secondaryBackgroundColor = "#f5f7fa"
+textColor = "#183475"
 font = "sans serif"
 
-[theme]
-base = "dark"  # Options: "light", "dark", "streamlit"
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false
