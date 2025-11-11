@@ -98,14 +98,18 @@ def show_missing_packages_notice():
 # -------------------------
 ROOT = os.path.abspath(os.path.dirname(__file__))
 ASSETS_DIR = os.path.join(ROOT, "assets")
+FONTS_DIR = os.path.join(ROOT, "fonts")
 LOGO_PATH = os.path.join(ASSETS_DIR, "logo.png")
 INVOICES_DIR = os.path.join(ROOT, "invoices")
-TAJAWAL_TTF = os.path.join(ROOT, "Tajawal-Regular.ttf")
-ROBOTO_REG = os.path.join(ROOT, "Roboto-Regular.ttf")
-ROBOTO_BOLD = os.path.join(ROOT, "Roboto-Bold.ttf")
+# Font paths - check multiple locations for compatibility
+TAJAWAL_TTF = os.path.join(FONTS_DIR, "Tajawal-Regular.ttf") if os.path.exists(os.path.join(FONTS_DIR, "Tajawal-Regular.ttf")) else os.path.join(ROOT, "Tajawal-Regular.ttf")
+ROBOTO_REG = os.path.join(FONTS_DIR, "Roboto-Regular.ttf") if os.path.exists(os.path.join(FONTS_DIR, "Roboto-Regular.ttf")) else os.path.join(ROOT, "Roboto-Regular.ttf")
+ROBOTO_BOLD = os.path.join(FONTS_DIR, "Roboto-Bold.ttf") if os.path.exists(os.path.join(FONTS_DIR, "Roboto-Bold.ttf")) else os.path.join(ROOT, "Roboto-Bold.ttf")
 
 os.makedirs(ASSETS_DIR, exist_ok=True)
+os.makedirs(FONTS_DIR, exist_ok=True)
 os.makedirs(INVOICES_DIR, exist_ok=True)
+os.makedirs(os.path.join(ASSETS_DIR, "signatures"), exist_ok=True)
 
 # -------------------------
 # Database helpers and migrations

@@ -178,6 +178,18 @@ docker-compose up -d
 
 ## Cloud Platform Deployment
 
+### Streamlit Cloud (Recommended for Quick Deployment)
+
+For the fastest and easiest deployment, see the dedicated guide:
+
+📖 **[STREAMLIT_CLOUD_DEPLOYMENT.md](./STREAMLIT_CLOUD_DEPLOYMENT.md)**
+
+This is the recommended option for:
+- Quick demos and prototypes
+- Small to medium deployments
+- No infrastructure management needed
+- Free tier available
+
 ### Heroku
 
 1. Create `Procfile`:

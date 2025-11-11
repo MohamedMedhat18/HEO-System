@@ -64,3 +64,16 @@ temp/
 
 # Node (if needed in future)
 node_modules/
+
+# Generated PDFs (keep directory but not files)
+invoices/*.pdf
+
+# Database files (keep schema but not data in production)
+db/*.db
+
+# Compiled Python files
+*.pyc
+__pycache__/
+
+# Streamlit cache
+.streamlit/cache/
